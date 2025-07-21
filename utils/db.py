@@ -19,4 +19,25 @@ def init_db():
         )
     ''')
 
-    
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS tenants (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            phone TEXT,
+            house_id INTEGER,
+            FOREIGN KEY (house_id) REFERENCES houses(id)
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS payments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            tenant_id INTEGER,
+            amount_paid REAL,
+            date TEXT,
+            FOREIGN KEY (tenant_id) REFERENCES tenants(id)
+        )
+    ''')
+
+    conn.commit()
+    conn.close()
