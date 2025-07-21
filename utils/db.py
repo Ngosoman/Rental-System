@@ -9,3 +9,14 @@ def connect():
 def init_db():
     conn = connect()
     cursor = conn.cursor()
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS houses (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            house_number TEXT NOT NULL,
+            location TEXT NOT NULL,
+            rent_amount REAL NOT NULL
+        )
+    ''')
+
+    
