@@ -9,4 +9,4 @@ def record_payment(tenant_id, amount):
                 (tenant_id, amount, date))
     conn.commit()
     conn.close()
-    print("✅ Payment recorded successfully.")
+    print("Payment recorded successfully.")
