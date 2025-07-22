@@ -19,4 +19,4 @@ def generate_receipt(tenant_name, house_number, amount, receipt_id):
     c.drawString(50, 640, "Thank you for your payment!")
 
     c.save()
-    print(f"📄 Receipt generated: {filename}")
+    print(f" Receipt generated: {filename}")
