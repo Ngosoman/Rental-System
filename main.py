@@ -38,7 +38,7 @@ def main():
             tid = int(input("Tenant ID: "))
             amount = float(input("Amount Paid (KES): "))
 
-            # Tenant Info
+            # Tenant  Info
             conn = connect()
             cur = conn.cursor()
             cur.execute("""
