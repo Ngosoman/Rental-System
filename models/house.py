@@ -7,7 +7,7 @@ def add_house(house_number, location, rent_amount):
                 (house_number, location, rent_amount))
     conn.commit()
     conn.close()
-    print("✅ House added successfully.")
+    print("House added successfully.")
 
 def view_houses():
     conn = connect()
