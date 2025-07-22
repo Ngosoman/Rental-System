@@ -2,6 +2,7 @@ from utils.db import init_db
 from models.house import add_house, view_houses
 from models.tenant import add_tenant, view_tenants
 
+
 def menu():
     print("""
     === Rental House Management ===
