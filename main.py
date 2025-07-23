@@ -1,6 +1,6 @@
 from models.house import add_house, view_houses
 from models.tenant import add_tenant, view_tenants
-from models.payment import record_payment
+from models.payment import record_payment, view_all_payments
 from utils.db import init_db, connect
 from utils.receipt import generate_receipt
 
@@ -20,8 +20,12 @@ def main():
 
         if choice == "1":
             house_number = input("House Number: ")
-            rent = float(input("Monthly Rent: "))
-            add_house(house_number, rent)
+            location = input("Location: ")
+            try:
+                rent = float(input("Monthly Rent (KES): "))
+                add_house(house_number, location, rent)
+            except ValueError:
+                print(" Invalid rent amount! Please enter a numeric value like 10000.00")
 
         elif choice == "2":
             view_houses()
@@ -29,43 +33,50 @@ def main():
         elif choice == "3":
             name = input("Tenant Name: ")
             phone = input("Phone Number: ")
-            house_id = int(input("House ID: "))
-            add_tenant(name, phone, house_id)
+            try:
+                house_id = int(input("House ID: "))
+                add_tenant(name, phone, house_id)
+            except ValueError:
+                print("Invalid house ID.")
 
         elif choice == "4":
             view_tenants()
 
         elif choice == "5":
-            tid = int(input("Tenant ID: "))
-            amount = float(input("Amount Paid (KES): "))
+            try:
+                tid = int(input("Tenant ID: "))
+                amount = float(input("Amount Paid (KES): "))
 
-            # Tenant  Info
-            conn = connect()
-            cur = conn.cursor()
-            cur.execute("""
-                SELECT tenants.name, houses.house_number 
-                FROM tenants 
-                JOIN houses ON tenants.house_id = houses.id 
-                WHERE tenants.id = ?
-            """, (tid,))
-            result = cur.fetchone()
-            conn.close()
+                # Tenant Info
+                conn = connect()
+                cur = conn.cursor()
+                cur.execute("""
+                    SELECT tenants.name, houses.house_number 
+                    FROM tenants 
+                    JOIN houses ON tenants.house_id = houses.id 
+                    WHERE tenants.id = ?
+                """, (tid,))
+                result = cur.fetchone()
+                conn.close()
 
-            if result:
-                tenant_name, house_number = result
-                record_payment(tid, amount)
-                receipt_id = tid * 1000 + int(amount) 
-                generate_receipt(tenant_name, house_number, amount, receipt_id)
-            else:
-                print("Tenant not found.")
+                if result:
+                    tenant_name, house_number = result
+                    record_payment(tid, amount)
+
+                    # Generate receipt ID
+                    receipt_id = tid * 1000 + int(amount)
+                    generate_receipt(tenant_name, house_number, amount, receipt_id)
+                else:
+                    print("Tenant not found.")
+
+            except ValueError:
+                print("Invalid input. Please enter valid numbers.")
 
         elif choice == "6":
-            from models.payment import view_all_payments
             view_all_payments()
 
-
         elif choice == "7":
-            print(" Exiting system. Goodbye!")
+            print("Exiting system. Goodbye!")
             break
 
         else:
