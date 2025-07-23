@@ -13,7 +13,8 @@ def main():
         print("3. Add Tenant")
         print("4. View Tenants")
         print("5. Record Payment")
-        print("6. Exit")
+        print("6. View All Payments")
+        print("7. Exit")
 
         choice = input("Enter your choice: ")
 
@@ -59,6 +60,11 @@ def main():
                 print("Tenant not found.")
 
         elif choice == "6":
+            from models.payment import view_all_payments
+            view_all_payments()
+
+
+        elif choice == "7":
             print(" Exiting system. Goodbye!")
             break
 
