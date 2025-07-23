@@ -2,7 +2,7 @@ from models.house import add_house, view_houses
 from models.tenant import add_tenant, view_tenants
 from models.payment import record_payment
 from utils.db import init_db, connect
-from utils.reciept import generate_receipt
+from utils.receipt import generate_receipt
 
 def main():
     init_db()
