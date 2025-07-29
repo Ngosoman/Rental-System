@@ -6,6 +6,8 @@ from models.payment import record_payment_by_name, view_all_payments
 from utils.db import init_db, connect
 from utils.receipt import generate_receipt
 
+USERNAME = "Admin"
+PASSWORD = "AdminHouses"
 
 def gui_add_appartement():
     appartement_number = simpledialog.askstring("Add Appartement", "Enter Appartement Number:")
@@ -104,8 +106,7 @@ def gui_view_payments():
             output += f"ID: {pay_id} | Tenant: {tenant} | House: {house} | Amount: KES {amount:.2f} | Date: {date}\n"
         messagebox.showinfo("All Payments", output)
 
-def main():
-    init_db()
+def show_main_window():
     root = tk.Tk()
     root.title("Rent System")
     root.geometry("400x400")
@@ -121,6 +122,36 @@ def main():
     tk.Button(root, text="Exit", command=root.destroy, width=30, bg="red", fg="white").pack(pady=20)
 
     root.mainloop()
+
+def show_login():
+    login_window = tk.Tk()
+    login_window.title("Admin Login")
+    login_window.geometry("300x200")
+
+    tk.Label(login_window, text="Username").pack(pady=5)
+    username_entry = tk.Entry(login_window)
+    username_entry.pack()
+
+    tk.Label(login_window, text="Password").pack(pady=5)
+    password_entry = tk.Entry(login_window, show="*")
+    password_entry.pack()
+
+    def attempt_login():
+        username = username_entry.get()
+        password = password_entry.get()
+
+        if username == USERNAME and password == PASSWORD:
+            login_window.destroy()
+            show_main_window()
+        else:
+            messagebox.showerror("Login Failed", "Invalid credentials.")
+
+    tk.Button(login_window, text="Login", command=attempt_login, bg="green", fg="white").pack(pady=10)
+    login_window.mainloop()
+
+def main():
+    init_db()
+    show_login()
 
 if __name__ == "__main__":
     main()
