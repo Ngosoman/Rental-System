@@ -19,9 +19,4 @@ def view_tenants():
     """)
     tenants = cur.fetchall()
     conn.close()
-
-    if tenants:
-        for tenant in tenants:
-            print(f"ID: {tenant[0]} | Name: {tenant[1]} | Phone: {tenant[2]} | House: {tenant[3]}")
-    else:
-        print("No tenants found.")
+    return tenants 

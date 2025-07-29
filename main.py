@@ -39,11 +39,12 @@ def gui_add_tenant():
 
 def gui_view_tenants():
     tenants = view_tenants()
-    if not tenants:
-        messagebox.showinfo("Tenants", "No tenants found.")
+    if tenants:
+        output = "\n".join([f"{t[0]} | {t[1]} | {t[2]} | {t[3]}" for t in tenants])
     else:
-        output = "\n".join([f"{t[0]} | {t[1]} | {t[2]} | Appartement #{t[3]}" for t in tenants])
-        messagebox.showinfo("All Tenants", output)
+        output = "No tenants found."
+
+    messagebox.showinfo("Tenants", output)
 
 def gui_record_payment():
     tid = simpledialog.askstring("Record Payment", "Enter Tenant ID:")
