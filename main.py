@@ -79,7 +79,7 @@ def gui_record_payment():
         
         if match:
             tenant_id, tenant_name, house_number = match
-            record_payment_by_name("John Doe", 8500)
+            record_payment_by_name(tenant_name, amount)
             receipt_id = tenant_id * 1000 + int(amount)
             generate_receipt(tenant_name, house_number, amount, receipt_id)
             messagebox.showinfo("Success", "Payment recorded and receipt generated.")
