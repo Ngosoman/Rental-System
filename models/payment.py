@@ -54,3 +54,5 @@ def view_all_payments():
     for row in rows:
         print(f"ReceiptID: {row[0]} | Tenant: {row[1]} | House: {row[2]} | Amount: KES {row[3]} | Date: {row[4]}")
     print("-" * 80)
+
+    return rows 

@@ -94,7 +94,10 @@ def gui_view_payments():
     if not payments:
         messagebox.showinfo("Payments", "No payments found.")
     else:
-        output = "\n".join([f"{p[0]} | {p[1]} | {p[2]} | KES {p[3]}" for p in payments])
+        output = "\n".join([
+            f"ID: {p[0]} | Tenant: {p[1]} | Amount: KES {p[2]} | Date: {p[3]}"
+            for p in payments
+        ])
         messagebox.showinfo("All Payments", output)
 
 def main():
