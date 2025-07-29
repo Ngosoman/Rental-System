@@ -2,21 +2,37 @@ from utils.db import connect
 from datetime import datetime
 from utils.receipt import generate_receipt  
 
-def record_payment(tenant_id, tenant_name, house_number, amount):
+def record_payment_by_name(tenant_name, amount):
     conn = connect()
     cur = conn.cursor()
-    date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    cur.execute("INSERT INTO payments (tenant_id, amount_paid, date) VALUES (?, ?, ?)",
-                (tenant_id, amount, date))
+    # Lookup tenant ID and house number from name
+    cur.execute("""
+        SELECT tenants.id, houses.house_number 
+        FROM tenants 
+        JOIN houses ON tenants.house_id = houses.id 
+        WHERE tenants.name = ?
+    """, (tenant_name,))
+    
+    tenant = cur.fetchone()
 
-    receipt_id = cur.lastrowid  
+    if tenant:
+        tenant_id, house_number = tenant
+        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    conn.commit()
-    conn.close()
+        cur.execute("INSERT INTO payments (tenant_id, amount_paid, date) VALUES (?, ?, ?)",
+                    (tenant_id, amount, date))
 
-    print(" Payment recorded successfully.")
-    generate_receipt(tenant_name, house_number, amount, receipt_id)  
+        receipt_id = cur.lastrowid
+        conn.commit()
+        conn.close()
+
+        print("Payment recorded successfully.")
+        generate_receipt(tenant_name, house_number, amount, receipt_id)
+
+    else:
+        conn.close()
+        raise Exception("Tenant not found. Please check the name.")
 
 def view_all_payments():
     conn = connect()
