@@ -2,9 +2,10 @@ import tkinter as tk
 from tkinter import messagebox, simpledialog
 from models.house import add_house, view_houses
 from models.tenant import add_tenant, view_tenants
-from models.payment import record_payment, view_all_payments
+from models.payment import record_payment_by_name, view_all_payments
 from utils.db import init_db, connect
 from utils.receipt import generate_receipt
+
 
 def gui_add_appartement():
     appartement_number = simpledialog.askstring("Add Appartement", "Enter Appartement Number:")
@@ -47,32 +48,44 @@ def gui_view_tenants():
     messagebox.showinfo("Tenants", output)
 
 def gui_record_payment():
-    tid = simpledialog.askstring("Record Payment", "Enter Tenant ID:")
+    tenant_name = simpledialog.askstring("Record Payment", "Enter Tenant Name:")
     amount_input = simpledialog.askstring("Record Payment", "Enter Amount Paid (KES):")
+    
     try:
-        tid = int(tid)
         amount = float(amount_input)
 
         conn = connect()
         cur = conn.cursor()
         cur.execute("""
-            SELECT tenants.name, houses.house_number 
+            SELECT tenants.id, tenants.name, houses.house_number 
             FROM tenants 
             JOIN houses ON tenants.house_id = houses.id 
-            WHERE tenants.id = ?
-        """, (tid,))
-        result = cur.fetchone()
+            WHERE tenants.name LIKE ?
+        """, (f"%{tenant_name}%",))
+        results = cur.fetchall()
         conn.close()
 
-        if result:
-            tenant_name, appartement_number = result
-            record_payment(tid, amount)
-
-            receipt_id = tid * 1000 + int(amount)
-            generate_receipt(tenant_name, appartement_number, amount, receipt_id)
+        if not results:
+            messagebox.showerror("Error", "No tenant found with that name.")
+            return
+        
+        if len(results) > 1:
+            options = "\n".join([f"{r[0]} - {r[1]} (House {r[2]})" for r in results])
+            chosen_id = simpledialog.askinteger("Multiple Matches Found",
+                                                 f"Multiple tenants match.\nSelect Tenant ID:\n{options}")
+            match = next((r for r in results if r[0] == chosen_id), None)
+        else:
+            match = results[0]
+        
+        if match:
+            tenant_id, tenant_name, house_number = match
+            record_payment_by_name("John Doe", 8500)
+            receipt_id = tenant_id * 1000 + int(amount)
+            generate_receipt(tenant_name, house_number, amount, receipt_id)
             messagebox.showinfo("Success", "Payment recorded and receipt generated.")
         else:
-            messagebox.showerror("Error", "Tenant not found.")
+            messagebox.showerror("Error", "Selected tenant ID not valid.")
+            
     except:
         messagebox.showerror("Error", "Invalid input.")
 
